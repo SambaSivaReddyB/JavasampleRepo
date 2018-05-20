@@ -14,7 +14,15 @@ node{
           sh "${mvnHome}/bin/mvn sonar:sonar"
         }
     }
-   
+//   stage('Build Docker Image'){
+//       sh 'docker build -t kamman/my-app:2.0.0 .'
+//   }
+   stage('Deploy to Tomcat'){
+      
+      sshagent(['tomcat']) {
+         sh 'scp -o StrictHostKeyChecking=no target/*.war ec2-user@172.31.29.99:/opt/tomcat/webapps/'
+      }
+   }   
    stage('Slack Notification'){
        slackSend baseUrl: 'https://hooks.slack.com/services/',
        channel: '#slack-jenkins',
